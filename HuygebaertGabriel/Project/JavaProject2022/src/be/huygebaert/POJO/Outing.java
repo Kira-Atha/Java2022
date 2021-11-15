@@ -2,13 +2,13 @@ package be.huygebaert.POJO;
 
 import java.sql.Date;
 
-public class Outgoing {
+public class Outing {
 	private int num;
 	private String startPoint;
 	private Date dateStart;
 	private double forfeit;
 	
-	public Outgoing() {
+	public Outing() {
 		
 	}
 
