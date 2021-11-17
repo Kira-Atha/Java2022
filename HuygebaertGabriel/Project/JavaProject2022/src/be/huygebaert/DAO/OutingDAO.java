@@ -3,39 +3,39 @@ package be.huygebaert.DAO;
 import java.sql.Connection;
 import java.util.List;
 
-import be.huygebaert.POJO.Treasurer;
+import be.huygebaert.POJO.Outing;
 
-public class TreasurerDAO extends DAO<Treasurer> {
-	public TreasurerDAO(Connection connection) {
+public class OutingDAO extends DAO<Outing> {
+	public OutingDAO(Connection connection) {
 		super(connection);
 	}
 
 	@Override
-	public boolean create(Treasurer obj) {
+	public boolean create(Outing obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean delete(Treasurer obj) {
+	public boolean delete(Outing obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean update(Treasurer obj) {
+	public boolean update(Outing obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Treasurer find(int id) {
+	public Outing find(int id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Treasurer> findAll() {
+	public List<Outing> find() {
 		// TODO Auto-generated method stub
 		return null;
 	}

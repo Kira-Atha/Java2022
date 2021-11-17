@@ -4,6 +4,12 @@ import java.awt.EventQueue;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+
+import be.huygebaert.POJO.Cyclo;
+import be.huygebaert.POJO.Descender;
+import be.huygebaert.POJO.TrailRider;
+import be.huygebaert.POJO.Trialist;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -56,17 +62,25 @@ public class Init {
 		btn_SignIn.addActionListener(e-> {
 			SignIn next = new SignIn();
 			JFrame nextFrame = next.signIn;
-			ChangeFrame(nextFrame);
+			changeFrame(nextFrame);
 		});
 
 		btn_SignUp.addActionListener(e-> {
 			SignUp next = new SignUp();
 			JFrame nextFrame = next.signUp;
-			ChangeFrame(nextFrame);
+			changeFrame(nextFrame);
 		});
 	}
-	public void ChangeFrame(JFrame window) {
+	
+	
+	public void changeFrame(JFrame window) {
 		window.setVisible(true);
 		init.dispose();
+	}
+	public void initCategories() {
+		Cyclo.getInstance();
+		Descender.getInstance();
+		TrailRider.getInstance();
+		Trialist.getInstance();
 	}
 }

@@ -3,14 +3,14 @@ package be.huygebaert.POJO;
 public class Cyclo extends Category{
 	static Cyclo singleInstanceOfCyclo;
 	
-	private Cyclo(int num) {
-		Cyclo.num = num;
-		num++;
-		Calendar singleCycloCalendar = new Calendar(num);
+	private Cyclo() {
+		Category.numCount++;
+		this.num=Category.numCount;
+		this.singleCalendar = new Calendar(this.num);
 	}
-	public static Cyclo getInstance(int num) {
+	public static Cyclo getInstance() {
 		if(singleInstanceOfCyclo == null) {
-			singleInstanceOfCyclo = new Cyclo(num);
+			singleInstanceOfCyclo = new Cyclo();
 		}
 		return singleInstanceOfCyclo;
 	}

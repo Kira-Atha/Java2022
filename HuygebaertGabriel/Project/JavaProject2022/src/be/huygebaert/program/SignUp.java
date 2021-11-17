@@ -13,6 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import be.huygebaert.DAO.DAO;
+import be.huygebaert.DAO.DAOFactory;
+import be.huygebaert.POJO.*;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -184,15 +189,57 @@ public class SignUp {
 				lb_Error.setText(result);
 				lb_Error.show();
 			}else {
+				Category category_ = null;
 				lb_Error.setText("");
 				lb_Error.hide();
 				// Alors envoyer résultat pour traitement
+				DAOFactory adf = new DAOFactory();
+				DAO<Person> PersonDAO = adf.getPersonDAO();
+				
+				if(category.equals("Trialist")){
+					category_ =  Trialist.getInstance();
+				}
+				if(category.equals("Descender")){
+					category_ =  Descender.getInstance();
+				}
+				if(category.equals("Cyclo")){
+					category_ =  Cyclo.getInstance();
+				}
+				if(category.equals("TrailRider")) {
+					category_ = TrailRider.getInstance();
+				}
+				
+				if(account.equals("Treasurer")) {
+					Treasurer treasurer = new Treasurer(firstname,lastname,password,tel,pseudo);
+					PersonDAO.create(treasurer);
+					ConsultCalendar next = new ConsultCalendar();
+					JFrame consultCalendar = next.consultCalendar;
+					changeFrame(consultCalendar);
+				}
+				if(account.equals("Member")) {
+					Member member = new Member(firstname,lastname,password,tel,pseudo,category_);
+						if(!member.equals(null)) {
+							PersonDAO.create(member);
+							ConsultCalendar next = new ConsultCalendar();
+							JFrame consultCalendar = next.consultCalendar;
+							changeFrame(consultCalendar);
+					}
+				}
+				if(account.equals("Manager")) {
+					Manager manager = new Manager(firstname,lastname,password,tel,pseudo,category_);
+					if(!manager.equals(null)) {
+						PersonDAO.create(manager);
+						ConsultCalendar next = new ConsultCalendar();
+						JFrame consultCalendar = next.consultCalendar;
+						changeFrame(consultCalendar);
+					}
+				}
 			}
 		});
 		btn_Back.addActionListener(e-> {
 			Init previous = new Init();
-			JFrame previousFrame = previous.init;
-			changeFrame(previousFrame);
+			JFrame home = previous.init;
+			changeFrame(home);
 		});
 	}
 	public void changeFrame(JFrame window) {

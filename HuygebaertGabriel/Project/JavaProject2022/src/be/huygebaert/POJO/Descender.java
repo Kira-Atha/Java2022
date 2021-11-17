@@ -3,15 +3,15 @@ package be.huygebaert.POJO;
 public class Descender extends VTT {
 	static Descender singleInstanceOfDescenders;
 	
-	private Descender(int num) {
-		Descender.num=num;
-		num++;
-		Calendar singleDescenderCalendar = new Calendar(num);
+	private Descender() {
+		Category.numCount++;
+		this.num = Category.numCount;
+		this.singleCalendar = new Calendar(num);
 	}
 	
-	public static Descender getInstance(int num) {
+	public static Descender getInstance() {
 		if(singleInstanceOfDescenders==null) {
-			singleInstanceOfDescenders=new Descender(num);
+			singleInstanceOfDescenders=new Descender();
 		}
 		return singleInstanceOfDescenders;
 	}

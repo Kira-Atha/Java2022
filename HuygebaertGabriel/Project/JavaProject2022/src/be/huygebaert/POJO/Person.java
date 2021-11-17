@@ -1,11 +1,16 @@
 package be.huygebaert.POJO;
 
-abstract public class Person {
-	private int id;
-	private String firstname;
-	private String lastname;
-	private String password;
-	private String tel;
+import java.io.Serializable;
+
+abstract public class Person implements Serializable {
+	private static final long serialVersionUID = 0L;
+	protected static int idCount = 0;
+	protected int id;
+	protected String firstname;
+	protected String lastname;
+	protected String password;
+	protected String tel;
+	protected String pseudo;
 	
 	public int getId() {
 		return id;
@@ -37,11 +42,20 @@ abstract public class Person {
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
-	
-	public void signUp() {
-		
+	public String getPseudo() {
+		return pseudo;
 	}
-	public void signIn() {
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+	}
+	public boolean signUp(Category category) {
+		return false;
+	}
+	public boolean signUp() {
+		return false;
+	}
+	public boolean signIn() {
 		
+		return false;
 	}
 }
