@@ -13,7 +13,9 @@ abstract public class Category {
 	public int getNum() {
 		return num;
 	}
-
+	public void setNum(int num) {
+		this.num=num;
+	}
 	public static List <Category> getAllCategories() {
 		List <Category> categories = null;
 		
@@ -33,8 +35,10 @@ abstract public class Category {
 	public void setSingleManager(Manager singleManager) {
 		this.singleManager = singleManager;
 	}
-	
-	
+	public void setSingleCalendar(Calendar singleCalendar) {
+		this.singleCalendar = singleCalendar;
+	}
+
 	public boolean addPerson(Person person) {
 		if(person instanceof Member) {
 			if(!memberCategories.contains(person)) {
@@ -50,7 +54,6 @@ abstract public class Category {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 }

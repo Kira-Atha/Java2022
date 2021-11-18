@@ -35,7 +35,7 @@ public class VehicleDAO extends DAO<Vehicle>{
 	}
 
 	@Override
-	public List<Vehicle> find() {
+	public List<Vehicle> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

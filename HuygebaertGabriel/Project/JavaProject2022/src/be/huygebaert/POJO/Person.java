@@ -48,14 +48,16 @@ abstract public class Person implements Serializable {
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
 	}
-	public boolean signUp(Category category) {
-		return false;
-	}
-	public boolean signUp() {
-		return false;
-	}
 	public boolean signIn() {
 		
+		return false;
+	}
+	public boolean signUp(String firstname, String lastname, String pseudo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	public boolean signUp(String firstname, String lastname, String pseudo, Category category) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 }

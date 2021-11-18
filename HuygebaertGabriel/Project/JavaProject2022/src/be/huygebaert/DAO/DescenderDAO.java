@@ -36,7 +36,7 @@ public class DescenderDAO extends DAO<Descender>{
 	}
 
 	@Override
-	public List<Descender> find() {
+	public List<Descender> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

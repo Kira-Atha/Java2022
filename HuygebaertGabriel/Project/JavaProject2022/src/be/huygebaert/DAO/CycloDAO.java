@@ -36,7 +36,7 @@ public class CycloDAO extends DAO<Cyclo> {
 	}
 
 	@Override
-	public List<Cyclo> find() {
+	public List<Cyclo> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

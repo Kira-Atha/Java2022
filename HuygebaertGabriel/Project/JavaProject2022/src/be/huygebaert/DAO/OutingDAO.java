@@ -35,7 +35,7 @@ public class OutingDAO extends DAO<Outing> {
 	}
 
 	@Override
-	public List<Outing> find() {
+	public List<Outing> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

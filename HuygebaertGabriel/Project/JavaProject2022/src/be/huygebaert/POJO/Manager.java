@@ -9,7 +9,7 @@ public class Manager extends Person {
 	
 	public Manager(String firstname, String lastname, String password, String tel, String pseudo, Category category) {
 		try {
-			if(signUp(category)) {
+			if(signUp(firstname, lastname,pseudo,category)) {
 				Person.idCount++;
 				this.id = Person.idCount;
 				this.firstname = firstname;
@@ -25,6 +25,12 @@ public class Manager extends Person {
 			System.out.println("Manager doesn't create");
 		}
 	}
+	public Manager() {
+		// TODO Auto-generated constructor stub
+	}
+	public Manager(String firstname, String lastname, String password, String tel, String pseudo) {
+		// TODO Auto-generated constructor stub
+	}
 	public Category getCategory() {
 		return category;
 	}
@@ -33,7 +39,7 @@ public class Manager extends Person {
 	}
 	// Va permettre ou non l'instanciation de l'objet => il ne sera créé que lorsqu'il y aura une inscription.
 	@Override
-	public boolean signUp(Category category) {
+	public boolean signUp(String firstname, String lastname, String pseudo,Category category) {
 		// Y a -t-il déjà un manager pour cette catégorie ? Si oui, ne pas permettre l'instanciation de l'objet
 		if(category.getSingleManager() == null) {
 			// Le manager existe peut-être déjà en tant que membre ?

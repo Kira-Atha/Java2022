@@ -7,7 +7,7 @@ public class Treasurer extends Person {
 
 	public Treasurer(String firstname, String lastname, String password, String tel, String pseudo) {
 		try {
-			if(signUp()) {
+			if(signUp(firstname,lastname,pseudo)) {
 				Person.idCount++;
 				this.id = Person.idCount;
 				this.firstname = firstname;
@@ -22,9 +22,12 @@ public class Treasurer extends Person {
 			System.out.println("Treasurer doesn't create");
 		}
 	}
+	public Treasurer() {
+		// TODO Auto-generated constructor stub
+	}
 	// Va permettre ou non l'instanciation de l'objet => il ne sera créé que lorsqu'il y aura une inscription.
 	@Override
-	public boolean signUp() {
+	public boolean signUp(String firstname, String lastname, String pseudo) {
 		// Juste vérifier que ce trésorier n'existe pas en tant que membre avant de l'ajouter
 		List<Member> allMembers = Member.getAllMembers();
 		for(Member memb:allMembers) {

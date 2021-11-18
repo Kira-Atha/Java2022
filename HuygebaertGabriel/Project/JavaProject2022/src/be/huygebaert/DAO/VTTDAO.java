@@ -35,7 +35,7 @@ public class VTTDAO extends DAO<VTT>{
 	}
 
 	@Override
-	public List<VTT> find() {
+	public List<VTT> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

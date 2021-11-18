@@ -35,7 +35,7 @@ public class VeloDAO extends DAO<Velo> {
 	}
 
 	@Override
-	public List<Velo> find() {
+	public List<Velo> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -35,7 +35,7 @@ public class TrialistDAO extends DAO<Trialist>{
 	}
 
 	@Override
-	public List<Trialist> find() {
+	public List<Trialist> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -194,7 +194,7 @@ public class SignUp {
 				lb_Error.hide();
 				// Alors envoyer résultat pour traitement
 				DAOFactory adf = new DAOFactory();
-				DAO<Person> PersonDAO = adf.getPersonDAO();
+				DAO<Person> personDAO = adf.getPersonDAO();
 				
 				if(category.equals("Trialist")){
 					category_ =  Trialist.getInstance();
@@ -211,27 +211,35 @@ public class SignUp {
 				
 				if(account.equals("Treasurer")) {
 					Treasurer treasurer = new Treasurer(firstname,lastname,password,tel,pseudo);
-					PersonDAO.create(treasurer);
-					ConsultCalendar next = new ConsultCalendar();
-					JFrame consultCalendar = next.consultCalendar;
-					changeFrame(consultCalendar);
+					if(!treasurer.equals(null)) {
+						personDAO.create(treasurer);
+						ConsultCalendar next = new ConsultCalendar();
+						JFrame consultCalendar = next.consultCalendar;
+						changeFrame(consultCalendar);
+					}else {
+						lb_Error.setText("This treasurer already exist in member !");
+					}
 				}
 				if(account.equals("Member")) {
 					Member member = new Member(firstname,lastname,password,tel,pseudo,category_);
 						if(!member.equals(null)) {
-							PersonDAO.create(member);
+							personDAO.create(member);
 							ConsultCalendar next = new ConsultCalendar();
 							JFrame consultCalendar = next.consultCalendar;
 							changeFrame(consultCalendar);
-					}
+						}else {
+							lb_Error.setText("This member already exist !");
+						}
 				}
 				if(account.equals("Manager")) {
 					Manager manager = new Manager(firstname,lastname,password,tel,pseudo,category_);
 					if(!manager.equals(null)) {
-						PersonDAO.create(manager);
+						personDAO.create(manager);
 						ConsultCalendar next = new ConsultCalendar();
 						JFrame consultCalendar = next.consultCalendar;
 						changeFrame(consultCalendar);
+					}else {
+						lb_Error.setText("This manager already exist in member or the category chosen has already a manager !");
 					}
 				}
 			}

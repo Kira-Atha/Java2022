@@ -2,13 +2,20 @@ package be.huygebaert.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
+import be.huygebaert.POJO.Cyclo;
+import be.huygebaert.POJO.Descender;
 import be.huygebaert.POJO.Manager;
 import be.huygebaert.POJO.Member;
 import be.huygebaert.POJO.Person;
+import be.huygebaert.POJO.TrailRider;
 import be.huygebaert.POJO.Treasurer;
+import be.huygebaert.POJO.Trialist;
 
 public class PersonDAO extends DAO<Person> {
 	public PersonDAO(Connection connection) {
@@ -110,12 +117,106 @@ public class PersonDAO extends DAO<Person> {
 
 	@Override
 	public Person find(int id) {
+		Member member;
+		Manager manager;
+		Treasurer treasurer;
+		
+		try {
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Member WHERE IdMember = " +id);
+			if(result.first()){
+				// Compléter avec info de base
+				member = new Member(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
+				member.setBalance(result.getDouble("Balance"));
+				member.setId(result.getInt("IdMember"));
+				// Compléter avec les catégories
+				result = this.connect.createStatement().executeQuery("SELECT * FROM cat_memb where IdMember =  " + id);
+				CategoryDAO categoryDAO = new CategoryDAO(this.connect);
+				while(result.next()) {
+					// L'id du calendrier = l'id de la catégorie ( type )
+					member.getMemberCategories().add(categoryDAO.find(result.getInt("IdCalendar")));
+				}
+				return member;
+			}
+			
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		try {
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Manager WHERE IdManager = " +id);
+			if(result.first()){
+				// Compléter avec info de base
+				manager = new Manager(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
+				manager.setId(result.getInt("IdManager"));
+				// Compléter avec la catégorie
+				CategoryDAO categoryDAO = new CategoryDAO(this.connect);
+				manager.setCategory(categoryDAO.find(result.getInt("IdCalendar")));
+				
+				return manager;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		try {
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Treasurer WHERE IdTreasurer = " +id);
+			if(result.first()){
+				// Compléter avec info de base
+				treasurer = new Treasurer(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
+				treasurer.setId(result.getInt("IdTreasurer"));
+				return treasurer;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public List<Person> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		AbstractList<Person> allPersons = new ArrayList<Person>();
+		Member member;
+		Manager manager;
+		Treasurer treasurer;
+		
+		try {
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Member");
+			while(result.next()){
+				// Compléter avec info de base
+				member = new Member(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
+				member.setBalance(result.getDouble("Balance"));
+				member.setId(result.getInt("IdMember"));
+				// Compléter avec les catégories
+				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM cat_memb where IdMember =  " + result.getInt("IdMember"));
+				CategoryDAO categoryDAO = new CategoryDAO(this.connect);
+				while(result2.next()) {
+					// L'id du calendrier = l'id de la catégorie ( type )
+					member.getMemberCategories().add(categoryDAO.find(result2.getInt("IdCalendar")));	
+				}
+				allPersons.add(member);
+			}
+			
+			result = this.connect.createStatement().executeQuery("SELECT * FROM Manager");
+			while(result.next()){
+				// Compléter avec info de base
+				manager = new Manager(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
+				manager.setId(result.getInt("IdManager"));
+				// Compléter avec les catégories
+				CategoryDAO categoryDAO = new CategoryDAO(this.connect);
+				manager.setCategory(categoryDAO.find(result.getInt("IdCalendar")));
+				allPersons.add(manager);
+			}
+			result = this.connect.createStatement().executeQuery("SELECT * FROM Treasurer");
+			while(result.next()){
+				// Compléter avec info de base
+				treasurer = new Treasurer(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
+				treasurer.setId(result.getInt("IdManager"));
+				allPersons.add(treasurer);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return allPersons;
 	}
 }

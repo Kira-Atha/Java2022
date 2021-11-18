@@ -1,10 +1,14 @@
 package be.huygebaert.program;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import be.huygebaert.DAO.DAO;
+import be.huygebaert.DAO.DAOFactory;
+import be.huygebaert.POJO.Category;
 import be.huygebaert.POJO.Cyclo;
 import be.huygebaert.POJO.Descender;
 import be.huygebaert.POJO.TrailRider;
@@ -39,6 +43,7 @@ public class Init {
 	 */
 	public Init() {
 		initialize();
+		initCategories();
 	}
 
 	/**
@@ -78,9 +83,14 @@ public class Init {
 		init.dispose();
 	}
 	public void initCategories() {
-		Cyclo.getInstance();
-		Descender.getInstance();
-		TrailRider.getInstance();
-		Trialist.getInstance();
+		DAOFactory adf = new DAOFactory();
+		DAO<Category> categoryDAO = adf.getCategoryDAO();
+		// Comme les catégories sont créées en même temps, si elles n'existent pas dans la base de données, findAll renverra une liste vide.
+		if(categoryDAO.findAll().isEmpty()) {
+			categoryDAO.create(Cyclo.getInstance());
+			categoryDAO.create(Descender.getInstance());
+			categoryDAO.create(TrailRider.getInstance());
+			categoryDAO.create(Trialist.getInstance());
+		}
 	}
 }

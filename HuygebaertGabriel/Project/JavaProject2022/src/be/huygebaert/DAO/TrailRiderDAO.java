@@ -35,7 +35,7 @@ public class TrailRiderDAO extends DAO<TrailRider> {
 	}
 
 	@Override
-	public List<TrailRider> find() {
+	public List<TrailRider> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

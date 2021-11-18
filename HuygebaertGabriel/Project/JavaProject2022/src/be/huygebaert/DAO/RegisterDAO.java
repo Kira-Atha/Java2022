@@ -35,7 +35,7 @@ public class RegisterDAO extends DAO<Register> {
 	}
 
 	@Override
-	public List<Register> find() {
+	public List<Register> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

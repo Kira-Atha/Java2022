@@ -14,7 +14,7 @@ public class Member extends Person implements Serializable{
 	
 	public Member(String firstname, String lastname, String password, String tel, String pseudo, Category category) {
 		try {
-			if(signUp(category)) {
+			if(signUp(firstname,lastname,pseudo)) {
 				Person.idCount++;
 				this.id = Person.idCount;
 				this.firstname = firstname;
@@ -31,6 +31,12 @@ public class Member extends Person implements Serializable{
 			System.out.println("Member doesn't create");
 		}
 	}
+	public Member() {
+		// TODO Auto-generated constructor stub
+	}
+	public Member(String firstname, String lastname, String password, String tel, String pseudo) {
+		// TODO Auto-generated constructor stub
+	}
 	public double getBalance() {
 		return balance;
 	}
@@ -39,7 +45,7 @@ public class Member extends Person implements Serializable{
 	}
 	// Va permettre ou non l'instanciation de l'objet => il ne sera créé que lorsqu'il y aura une inscription.
 	@Override
-	public boolean signUp(Category category) {
+	public boolean signUp(String firstname, String lastname, String pseudo) {
 		// Juste vérifier que ce membre n'existe pas avant de l'ajouter
 		List<Member> allMembers = getAllMembers();
 		for(Member memb:allMembers) {
