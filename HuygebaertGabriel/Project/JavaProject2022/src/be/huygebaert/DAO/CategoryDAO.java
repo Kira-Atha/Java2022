@@ -23,7 +23,7 @@ public class CategoryDAO extends DAO<Category> {
 
 	@Override
 	public boolean create(Category obj) {
-		String categoryToPutInDb = obj.getClass().getEnclosingClass().getName();
+		String categoryToPutInDb = obj.getClass().getSimpleName();
 		try {
 		    PreparedStatement ps0 = this.connect.prepareStatement("INSERT INTO Calendar VALUES (?,?)");
 		    ps0.setInt(1, obj.getNum());
@@ -55,66 +55,93 @@ public class CategoryDAO extends DAO<Category> {
 
 	@Override
 	public Category find(int id) {
-		Category category = (Category) new Object();
-		
-		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar =" +id);
-			if(result.first()) {
-				category.setNum(result.getInt("IdCalendar"));
-				
-				
-				result = this.connect.createStatement().executeQuery("SELECT * FROM cat_memb where IdCalendar = " + id);
-				PersonDAO personDAO = new PersonDAO(this.connect);
-				while(result.next()) {
-					category.addPerson(personDAO.find(result.getInt("IdMember")));
-				}
-				result = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+id );
-				if(result.first()) {
-					category.setSingleManager((Manager)personDAO.find(result.getInt("IdManager")));
-				}
-				CalendarDAO calendarDAO = new CalendarDAO(this.connect);
-				// car id identique
-				category.setSingleCalendar(calendarDAO.find(id));
-			}
-			
-			return category;
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}
-		
 		return null;
 	}
 
 	@Override
 	public List<Category> findAll() {
-		AbstractList<Category> categories = new ArrayList<Category>();
+		List<Category> categories = new ArrayList<Category>();
+		MemberDAO memberDAO = new MemberDAO(this.connect);
+		ManagerDAO managerDAO = new ManagerDAO(this.connect);
+		CalendarDAO calendarDAO = new CalendarDAO(this.connect);
+		
+		Cyclo instanceCyclo = Cyclo.getInstance();
+		Descender instanceDescender = Descender.getInstance();
+		TrailRider instanceTrailRider = TrailRider.getInstance();
+		Trialist instanceTrialist = Trialist.getInstance();
+		
 		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar");
-			while(result.next()) {
-				Category category = (Category) new Object();
-
-				category.setNum(result.getInt("IdCalendar"));
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+instanceCyclo.getNum());
+			if(result.first()) {
+				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Cat_Memb where IdCalendar ="+instanceCyclo.getNum());
 				
-				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM cat_memb where IdCalendar ="+category.getNum());
-				PersonDAO personDAO = new PersonDAO(this.connect);
 				while(result2.next()) {
-					category.addPerson(personDAO.find(result2.getInt("IdMember")));
+					instanceCyclo.addPerson(memberDAO.find(result2.getInt("IdMember")));
 				}
-				result2 = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+category.getNum());
-				if(result2.first()) {
-					category.setSingleManager((Manager)personDAO.find(result2.getInt("IdManager")));
-				}
-				CalendarDAO calendarDAO = new CalendarDAO(this.connect);
+				result2 = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+instanceCyclo.getNum());
+//				if(result2.first()) {
+//					instanceCyclo.addPerson(managerDAO.find(result2.getInt("IdManager")));
+//				}
 				// car id identique
-				category.setSingleCalendar(calendarDAO.find(category.getNum()));
-				
-				categories.add(category);
+				//instanceCyclo.setSingleCalendar(calendarDAO.find(instanceCyclo.getNum()));
+				categories.add(instanceCyclo);
+			}else {
+				// Pas la peine d'aller plus loin s'il ne trouve pas déjà la première catégorie puisque les 4 sont créées en même temps
+				return categories;
 			}
-			return categories;
-
+				
+			result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+instanceDescender.getNum());
+			if(result.first()) {
+				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Cat_Memb where IdCalendar ="+instanceDescender.getNum());
+				while(result2.next()) {
+					instanceDescender.addPerson(memberDAO.find(result2.getInt("IdMember")));
+				}
+//				result2 = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+instanceDescender.getNum());
+//				if(result2.first()) {
+//					instanceDescender.setSingleManager((Manager)managerDAO.find(result2.getInt("IdManager")));
+//				}
+				// car id identique
+				//instanceDescender.setSingleCalendar(calendarDAO.find(instanceDescender.getNum()));
+				
+				categories.add(instanceDescender);
+			}
+		
+			result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+instanceTrialist.getNum());
+			if(result.first()) {
+			
+				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Cat_Memb where IdCalendar ="+instanceTrialist.getNum());
+				while(result2.next()) {
+					instanceTrialist.addPerson(memberDAO.find(result2.getInt("IdMember")));
+				}
+//				result2 = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+instanceTrialist.getNum());
+//				if(result2.first()) {
+//					instanceTrialist.setSingleManager((Manager)managerDAO.find(result2.getInt("IdManager")));
+//				}
+				// car id identique
+				//instanceTrialist.setSingleCalendar(calendarDAO.find(instanceTrialist.getNum()));
+				
+				categories.add(instanceTrialist);
+			}
+			
+			result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+instanceTrailRider.getNum());
+			if(result.first()) {
+			
+				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Cat_Memb where IdCalendar ="+instanceTrailRider.getNum());
+				while(result2.next()) {
+					instanceTrailRider.addPerson(memberDAO.find(result2.getInt("IdMember")));
+				}
+//				result2 = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+instanceTrailRider.getNum());
+//				if(result2.first()) {
+//					instanceTrailRider.setSingleManager((Manager)managerDAO.find(result2.getInt("IdManager")));
+//				}
+				// car id identique
+				//instanceTrailRider.setSingleCalendar(calendarDAO.find(instanceCyclo.getNum()));
+				
+				categories.add(instanceTrailRider);
+			}
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return categories;
 	}
 }

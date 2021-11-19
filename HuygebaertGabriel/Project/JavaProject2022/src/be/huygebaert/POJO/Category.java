@@ -6,9 +6,9 @@ abstract public class Category {
 	// Num category = num calendar => more easier
 	protected static int numCount = 0;
 	protected int num;
-	private Manager singleManager = null;
-	private List<Member> memberCategories;
-	protected Calendar singleCalendar=null;
+	private Manager singleManager;
+	private List<Member> categoryMembers;
+	protected Calendar singleCalendar;
 	
 	public int getNum() {
 		return num;
@@ -25,13 +25,15 @@ abstract public class Category {
 		Category category = null;
 		return category;
 	}
-	public List<Member> getMemberCategories() {
-		return memberCategories;
+	public List<Member> getCategoryMembers() {
+		return categoryMembers;
 	}
 	public Manager getSingleManager() {
 		return singleManager;
 	}
-
+	public Calendar getSingleCalendar() {
+		return this.singleCalendar;
+	}
 	public void setSingleManager(Manager singleManager) {
 		this.singleManager = singleManager;
 	}
@@ -41,17 +43,21 @@ abstract public class Category {
 
 	public boolean addPerson(Person person) {
 		if(person instanceof Member) {
-			if(!memberCategories.contains(person)) {
+			if(!categoryMembers.contains(person)) {
+				// ajout de la personne dans la liste des membres de la catégorie
 				Member member = (Member) person;
-				memberCategories.add(member);
+				categoryMembers.add(member);
 			}
-			return true;
+			// Ajout de la catégorie à la liste du membre 
+			if(!((Member) person).getMemberCategories().contains(this)) {
+				((Member) person).getMemberCategories().add(this);
+			}
 		}
 		if(person instanceof Manager) {
 			if(singleManager==null) {
 				Manager manager = (Manager) person;
-				singleManager = manager;
-				return true;
+				this.singleManager = manager;
+				manager.setCategory(this);
 			}
 		}
 		return false;

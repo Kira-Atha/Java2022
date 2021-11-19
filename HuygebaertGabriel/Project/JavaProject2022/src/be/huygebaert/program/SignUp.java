@@ -213,9 +213,9 @@ public class SignUp {
 					Treasurer treasurer = new Treasurer(firstname,lastname,password,tel,pseudo);
 					if(!treasurer.equals(null)) {
 						personDAO.create(treasurer);
-						ConsultCalendar next = new ConsultCalendar();
-						JFrame consultCalendar = next.consultCalendar;
-						changeFrame(consultCalendar);
+						MonitorPayments next = new MonitorPayments();
+						JFrame monitorPayments = next.monitorPayments;
+						changeFrame(monitorPayments);
 					}else {
 						lb_Error.setText("This treasurer already exist in member !");
 					}
@@ -224,22 +224,23 @@ public class SignUp {
 					Member member = new Member(firstname,lastname,password,tel,pseudo,category_);
 						if(!member.equals(null)) {
 							personDAO.create(member);
-							ConsultCalendar next = new ConsultCalendar();
-							JFrame consultCalendar = next.consultCalendar;
-							changeFrame(consultCalendar);
+							ConsultCategories next = new ConsultCategories();
+							JFrame consultCategories = next.consultCategories;
+							changeFrame(consultCategories);
 						}else {
 							lb_Error.setText("This member already exist !");
 						}
 				}
 				if(account.equals("Manager")) {
 					Manager manager = new Manager(firstname,lastname,password,tel,pseudo,category_);
+//					System.out.println(category_);
+//					System.out.println(manager.getFirstname());
+//					System.out.println(manager.getPseudo());
 					if(!manager.equals(null)) {
 						personDAO.create(manager);
-						ConsultCalendar next = new ConsultCalendar();
+						ConsultCalendar next = new ConsultCalendar(manager);
 						JFrame consultCalendar = next.consultCalendar;
 						changeFrame(consultCalendar);
-					}else {
-						lb_Error.setText("This manager already exist in member or the category chosen has already a manager !");
 					}
 				}
 			}
@@ -249,6 +250,7 @@ public class SignUp {
 			JFrame home = previous.init;
 			changeFrame(home);
 		});
+		signUp.setVisible(true);
 	}
 	public void changeFrame(JFrame window) {
 		window.setVisible(true);

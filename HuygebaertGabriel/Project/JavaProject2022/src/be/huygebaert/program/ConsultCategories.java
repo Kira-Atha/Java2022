@@ -4,9 +4,9 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
-public class Calendar {
+public class ConsultCategories {
 
-	private JFrame frame;
+	public JFrame consultCategories;
 
 	/**
 	 * Launch the application.
@@ -15,8 +15,8 @@ public class Calendar {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Calendar window = new Calendar();
-					window.frame.setVisible(true);
+					ConsultCategories window = new ConsultCategories();
+					window.consultCategories.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -27,7 +27,7 @@ public class Calendar {
 	/**
 	 * Create the application.
 	 */
-	public Calendar() {
+	public ConsultCategories() {
 		initialize();
 	}
 
@@ -35,9 +35,10 @@ public class Calendar {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		consultCategories = new JFrame();
+		consultCategories.setBounds(100, 100, 800, 600);
+		consultCategories.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		consultCategories.setLayout(null);
+		consultCategories.setLocationRelativeTo(null);
 	}
-
 }

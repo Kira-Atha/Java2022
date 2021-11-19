@@ -3,6 +3,10 @@ package be.huygebaert.POJO;
 import java.io.Serializable;
 import java.util.List;
 
+import be.huygebaert.DAO.DAO;
+import be.huygebaert.DAO.DAOFactory;
+import be.huygebaert.DAO.MemberDAO;
+
 public class Member extends Person implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private double balance;
@@ -35,13 +39,22 @@ public class Member extends Person implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 	public Member(String firstname, String lastname, String password, String tel, String pseudo) {
-		// TODO Auto-generated constructor stub
+		Person.idCount++;
+		this.id = Person.idCount;
+		this.firstname = firstname;
+		this.lastname=lastname;
+		this.password=password;
+		this.tel=tel;
+		this.pseudo=pseudo;
 	}
 	public double getBalance() {
 		return balance;
 	}
 	public void setBalance(double balance) {
 		this.balance = balance;
+	}
+	public List<Category> getMemberCategories() {
+		return memberCategories;
 	}
 	// Va permettre ou non l'instanciation de l'objet => il ne sera créé que lorsqu'il y aura une inscription.
 	@Override
@@ -63,17 +76,15 @@ public class Member extends Person implements Serializable{
 	}
 	
 	public static List<Member> getAllMembers(){
-		List<Member> members = null;
+		DAOFactory adf = new DAOFactory();
+		DAO<Member> memberDAO = adf.getMemberDAO();
 		
-		return members;
+		return memberDAO.findAll();
 	}
 	
 	public static List<Member> getMemberRegister(Register register){
 		List<Member> memberRegisters = null;
 		
 		return memberRegisters;
-	}
-	public List<Category> getMemberCategories() {
-		return memberCategories;
 	}
 }

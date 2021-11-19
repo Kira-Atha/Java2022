@@ -37,12 +37,13 @@ public class PersonDAO extends DAO<Person> {
 		        ps0.setString(7, member.getPseudo());
 		        int isOk0 = ps0.executeUpdate();
 
-		        
+		        // Comme la catégorie est choisie à l'inscription, ajout dans la table.
 		        PreparedStatement ps1 = this.connect.prepareStatement("INSERT INTO Cat_Memb VALUES (?,?)");
 		        ps1.setInt(1, member.getId());
 		        ps1.setInt(2, member.getMemberCategories().get(0).getNum());
 		        int isOk1 = ps1.executeUpdate();
 		        
+		        // Ajouter la catégorie à la liste des catégories du membre
 		        member.getMemberCategories().get(0).addPerson(member);
 		        
 		        if(isOk0 == 1 && isOk1 == 1) {
@@ -57,14 +58,13 @@ public class PersonDAO extends DAO<Person> {
 		if(obj instanceof Manager) {
 			Manager manager = (Manager) obj;
 			try {
-			    PreparedStatement ps = this.connect.prepareStatement("INSERT INTO Member VALUES (?,?,?,?,?,?,?)");
-			    ps.setInt(1, manager.getId());
-		        ps.setString(2, manager.getFirstname());
-		        ps.setString(3, manager.getLastname());
-		        ps.setString(4, manager.getPassword());
-		        ps.setString(5, manager.getTel());
+			    PreparedStatement ps = this.connect.prepareStatement("INSERT INTO Manager(Firstname,Lastname,Password,Tel,IdCalendar,Pseudo) VALUES(?,?,?,?,?,?)");
+		        ps.setString(1, manager.getFirstname());
+		        ps.setString(2, manager.getLastname());
+		        ps.setString(3, manager.getPassword());
+		        ps.setString(4, manager.getTel());
+		        ps.setInt(5, manager.getCategory().getNum());
 		        ps.setString(6, manager.getPseudo());
-		        ps.setInt(7, manager.getCategory().getNum());
 		        
 		        manager.getCategory().addPerson(manager);
 		        int isOk = ps.executeUpdate();
@@ -82,7 +82,7 @@ public class PersonDAO extends DAO<Person> {
 		if(obj instanceof Treasurer) {
 			Treasurer treasurer = (Treasurer) obj;
 			try {
-			    PreparedStatement ps = this.connect.prepareStatement("INSERT INTO Member VALUES (?,?,?,?,?,?)");
+			    PreparedStatement ps = this.connect.prepareStatement("INSERT INTO Treasurer VALUES (?,?,?,?,?,?)");
 			    ps.setInt(1, treasurer.getId());
 		        ps.setString(2, treasurer.getFirstname());
 		        ps.setString(3, treasurer.getLastname());
@@ -117,64 +117,12 @@ public class PersonDAO extends DAO<Person> {
 
 	@Override
 	public Person find(int id) {
-		Member member;
-		Manager manager;
-		Treasurer treasurer;
-		
-		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Member WHERE IdMember = " +id);
-			if(result.first()){
-				// Compléter avec info de base
-				member = new Member(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
-				member.setBalance(result.getDouble("Balance"));
-				member.setId(result.getInt("IdMember"));
-				// Compléter avec les catégories
-				result = this.connect.createStatement().executeQuery("SELECT * FROM cat_memb where IdMember =  " + id);
-				CategoryDAO categoryDAO = new CategoryDAO(this.connect);
-				while(result.next()) {
-					// L'id du calendrier = l'id de la catégorie ( type )
-					member.getMemberCategories().add(categoryDAO.find(result.getInt("IdCalendar")));
-				}
-				return member;
-			}
-			
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
-		
-		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Manager WHERE IdManager = " +id);
-			if(result.first()){
-				// Compléter avec info de base
-				manager = new Manager(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
-				manager.setId(result.getInt("IdManager"));
-				// Compléter avec la catégorie
-				CategoryDAO categoryDAO = new CategoryDAO(this.connect);
-				manager.setCategory(categoryDAO.find(result.getInt("IdCalendar")));
-				
-				return manager;
-			}
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
-		
-		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Treasurer WHERE IdTreasurer = " +id);
-			if(result.first()){
-				// Compléter avec info de base
-				treasurer = new Treasurer(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
-				treasurer.setId(result.getInt("IdTreasurer"));
-				return treasurer;
-			}
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
 		return null;
 	}
 
 	@Override
 	public List<Person> findAll() {
-		AbstractList<Person> allPersons = new ArrayList<Person>();
+		List<Person> allPersons = new ArrayList<Person>();
 		Member member;
 		Manager manager;
 		Treasurer treasurer;
@@ -216,7 +164,6 @@ public class PersonDAO extends DAO<Person> {
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return allPersons;
 	}
 }
