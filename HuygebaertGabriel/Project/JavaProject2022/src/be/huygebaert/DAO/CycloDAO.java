@@ -34,37 +34,44 @@ public class CycloDAO extends DAO<Cyclo> {
 	}
 
 	@Override
-	public Cyclo find(int id) {
-		Cyclo instanceCyclo = Cyclo.getInstance();
-		
+	public Cyclo find(int id) {	
 		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar =" +id);
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+id);
 			if(result.first()) {
-				instanceCyclo.setNum(result.getInt("IdCalendar"));
 				
-				result = this.connect.createStatement().executeQuery("SELECT * FROM Cat_Memb where IdCalendar = " + id);
+				Cyclo instanceCyclo = Cyclo.getInstance();
 				MemberDAO memberDAO = new MemberDAO(this.connect);
 				ManagerDAO managerDAO = new ManagerDAO(this.connect);
+				CalendarDAO calendarDAO = new CalendarDAO(this.connect);
 				
+				instanceCyclo.setSingleCalendar(calendarDAO.find(instanceCyclo.getNum()));
+				
+				result = this.connect.createStatement().executeQuery(
+						"SELECT * FROM Calendar INNER JOIN Cat_Memb "
+						+ "ON Calendar.IdCalendar = Cat_Memb.IdCalendar "
+						+ "INNER JOIN Member "
+						+ "ON Cat_Memb.IdMember = Member.IdMember "
+						+ "WHERE IdCalendar ="+id);
 				while(result.next()) {
 					instanceCyclo.addPerson(memberDAO.find(result.getInt("IdMember")));
 				}
-				result = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar = "+id );
-//				if(result.first()) {
-//					instanceCyclo.addPerson(managerDAO.find(result.getInt("IdManager")));
-//				}
-				CalendarDAO calendarDAO = new CalendarDAO(this.connect);
-				// car id identique
-				instanceCyclo.setSingleCalendar(calendarDAO.find(id));
+				result = this.connect.createStatement().executeQuery(
+						"SELECT * FROM Calendar INNER JOIN Manager "
+						+ "ON Calendar.IdCalendar = Manager.IdCalendar "
+						+ "WHERE IdCalendar ="+id);
+				
+				while(result.next()) {
+					// Bien qu'il n'y ait qu'un seul manager, faire result.first() pose problème.
+					// .next() va tout de même s'arrêter au bout du premier et unique manager rencontré pour cette catégorie.
+					instanceCyclo.addPerson(managerDAO.find(result.getInt("IdManager")));
+				}
+				return instanceCyclo;
 			}
-			
-			return instanceCyclo;
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return instanceCyclo;
+		return null;
 	}
-
 	@Override
 	public List<Cyclo> findAll() {
 		// TODO Auto-generated method stub

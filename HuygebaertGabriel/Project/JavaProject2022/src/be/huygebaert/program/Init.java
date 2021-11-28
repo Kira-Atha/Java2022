@@ -25,9 +25,6 @@ public class Init {
 	public JFrame init;
 	private JButton btn_SignUp, btn_SignIn;
 	
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -41,17 +38,11 @@ public class Init {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public Init() {
 		initialize();
 		initCategories();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		init = new JFrame("Home");
 		init.setBounds(0, 0, 800,600);
@@ -98,20 +89,31 @@ public class Init {
 		Trialist instanceTrialist = Trialist.getInstance();
 		
 		List<Category> categories = categoryDAO.findAll();
-		
+//		
 		if(categories.isEmpty()) {
 			categoryDAO.create(instanceCyclo);
 			categoryDAO.create(instanceDescender);
 			categoryDAO.create(instanceTrailRider);
 			categoryDAO.create(instanceTrialist);
 		}
-		// TEST
-//		for(Category category:categories) {
-//			System.out.println(category.getClass().getSimpleName());
-//			System.out.println(category.getSingleManager());
-//			System.out.println(category.getCategoryMembers());
-//			System.out.println(category.getSingleCalendar().getInstanceOfCalendar(category));
+		
+		
+		// ESPACE TEST
+//		if(!categories.isEmpty()) {
+//			for(Category category:categories) {
+//				if(category!=null) {
+//					System.out.println(category.getClass().getSimpleName());
+//					System.out.println(category.getSingleManager());
+//					System.out.println(category.getCategoryMembers());
+//					System.out.println(category.getSingleCalendar().getNum());
+//				}else {
+//					System.out.println("Catégorie nulle");
+//				}
+//			}
+//		}else {
+//			System.out.print("Liste de catégories nulle");
 //		}
+//		
 //		DAO<Manager> managerDAO = adf.getManagerDAO();
 //		Manager manager = managerDAO.find(1);
 //		System.out.println(manager.getFirstname());
@@ -119,7 +121,7 @@ public class Init {
 //		
 //		DAO<Cyclo> cycloDAO = adf.getCycloDAO();
 //		instanceCyclo= cycloDAO.find(1);
-		//System.out.println(instanceCyclo.getSingleManager().getFirstname());
+//		//System.out.println(instanceCyclo.getSingleManager().getFirstname());
 		
 	}
 }

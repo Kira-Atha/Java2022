@@ -1,20 +1,22 @@
 package be.huygebaert.POJO;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import be.huygebaert.DAO.DAO;
 import be.huygebaert.DAO.DAOFactory;
 import be.huygebaert.DAO.MemberDAO;
 
-public class Member extends Person implements Serializable{
-	private static final long serialVersionUID = 1L;
-	private double balance;
+public class Member extends Person{
+	private static final long serialVersionUID = 5312718583319369493L;
 
+	private double balance;
 	private List<Category> memberCategories;
-	private Velo memberVelo;
-	private List<Vehicle> memberVehicles;
-	private Register memberRegister;
+	private List <Velo> memberVelos;
+	private Vehicle memberVehicle = null;
+	private List<Register> memberRegisters;
+	
+	public Member() {}
 	
 	public Member(String firstname, String lastname, String password, String tel, String pseudo, Category category) {
 		try {
@@ -27,16 +29,19 @@ public class Member extends Person implements Serializable{
 				this.tel=tel;
 				this.pseudo=pseudo;
 				this.balance=0;
+				
+				memberCategories = new ArrayList<Category>();
 				this.memberCategories.add(category);
-			}else {
-				//lancer exception
+				// 
+				memberVelos = new ArrayList<Velo>();
+				Velo velo = new Velo();
+				this.memberVelos.add(velo);
+				
+				memberRegisters = new ArrayList<Register>();
 			}
 		}catch(Exception e) {
-			System.out.println("Member doesn't create");
+			e.printStackTrace();
 		}
-	}
-	public Member() {
-		// TODO Auto-generated constructor stub
 	}
 	public Member(String firstname, String lastname, String password, String tel, String pseudo) {
 		Person.idCount++;
@@ -46,6 +51,9 @@ public class Member extends Person implements Serializable{
 		this.password=password;
 		this.tel=tel;
 		this.pseudo=pseudo;
+		memberCategories = new ArrayList<Category>();
+		memberVelos = new ArrayList<Velo>();
+		memberRegisters = new ArrayList<Register>();
 	}
 	public double getBalance() {
 		return balance;
@@ -56,25 +64,9 @@ public class Member extends Person implements Serializable{
 	public List<Category> getMemberCategories() {
 		return memberCategories;
 	}
-	// Va permettre ou non l'instanciation de l'objet => il ne sera créé que lorsqu'il y aura une inscription.
-	@Override
-	public boolean signUp(String firstname, String lastname, String pseudo) {
-		// Juste vérifier que ce membre n'existe pas avant de l'ajouter
-		List<Member> allMembers = getAllMembers();
-		for(Member memb:allMembers) {
-			if(!memb.firstname.equals(this.firstname) && !memb.lastname.equals(this.lastname) || !memb.pseudo.equals(this.pseudo)) {
-				return true;
-			}
-		}
-		return false;
+	public void setMemberCategories(List<Category> memberCategories) {
+		this.memberCategories = memberCategories;
 	}
-	public void calculateBalance() {
-		
-	}
-	public void verifyBalance() {
-		
-	}
-	
 	public static List<Member> getAllMembers(){
 		DAOFactory adf = new DAOFactory();
 		DAO<Member> memberDAO = adf.getMemberDAO();
@@ -87,4 +79,50 @@ public class Member extends Person implements Serializable{
 		
 		return memberRegisters;
 	}
+
+	public List <Velo> getMemberVelos() {
+		return memberVelos;
+	}
+
+	public void setMemberVelos(List <Velo> memberVelos) {
+		this.memberVelos = memberVelos;
+	}
+
+	public Vehicle getMemberVehicle() {
+		return memberVehicle;
+	}
+
+	public void setMemberVehicle(Vehicle memberVehicle) {
+		this.memberVehicle = memberVehicle;
+	}
+
+	public List<Register> getMemberRegisters() {
+		return memberRegisters;
+	}
+
+	public void setMemberRegisters(List<Register> memberRegisters) {
+		this.memberRegisters = memberRegisters;
+	}
+
+	@Override
+	public boolean signUp(String firstname, String lastname, String pseudo) {
+		List<Member> allMembers = Member.getAllMembers();
+		if(!allMembers.isEmpty()) {
+			for(Member memb:allMembers) {
+				if(!memb.firstname.equals(this.firstname) && !memb.lastname.equals(this.lastname) && !memb.pseudo.equals(this.pseudo)) {
+					return true;
+				}
+			}
+		}else {
+			return true;
+		}
+		return false;
+	}
+	public void calculateBalance() {
+		
+	}
+	public void verifyBalance() {
+		
+	}
+	
 }

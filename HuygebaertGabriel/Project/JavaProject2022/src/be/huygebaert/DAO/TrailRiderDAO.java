@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import be.huygebaert.POJO.Category;
+import be.huygebaert.POJO.Cyclo;
 import be.huygebaert.POJO.Manager;
 import be.huygebaert.POJO.TrailRider;
 
@@ -34,33 +35,41 @@ public class TrailRiderDAO extends DAO<TrailRider> {
 
 	@Override
 	public TrailRider find(int id) {
-		TrailRider instanceTR = TrailRider.getInstance();
-		
 		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar =" +id);
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+id);
 			if(result.first()) {
-				instanceTR.setNum(result.getInt("IdCalendar"));
-				
-				
-				result = this.connect.createStatement().executeQuery("SELECT * FROM cat_memb where IdCalendar = " + id);
-				PersonDAO personDAO = new PersonDAO(this.connect);
-				while(result.next()) {
-					instanceTR.addPerson(personDAO.find(result.getInt("IdMember")));
-				}
-				result = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+id );
-				if(result.first()) {
-					instanceTR.setSingleManager((Manager)personDAO.find(result.getInt("IdManager")));
-				}
+				TrailRider instanceTrailRider = TrailRider.getInstance();
+				MemberDAO memberDAO = new MemberDAO(this.connect);
+				ManagerDAO managerDAO = new ManagerDAO(this.connect);
 				CalendarDAO calendarDAO = new CalendarDAO(this.connect);
-				// car id identique
-				instanceTR.setSingleCalendar(calendarDAO.find(id));
+				
+				instanceTrailRider.setSingleCalendar(calendarDAO.find(instanceTrailRider.getNum()));
+				
+				result = this.connect.createStatement().executeQuery(
+						"SELECT * FROM Calendar INNER JOIN Cat_Memb "
+						+ "ON Calendar.IdCalendar = Cat_Memb.IdCalendar "
+						+ "INNER JOIN Member "
+						+ "ON Cat_Memb.IdMember = Member.IdMember "
+						+ "WHERE IdCalendar ="+instanceTrailRider.getNum());
+				while(result.next()) {
+					instanceTrailRider.addPerson(memberDAO.find(result.getInt("IdMember")));
+				}
+				result = this.connect.createStatement().executeQuery(
+						"SELECT * FROM Calendar INNER JOIN Manager "
+						+ "ON Calendar.IdCalendar = Manager.IdCalendar "
+						+ "WHERE IdCalendar ="+instanceTrailRider.getNum());
+				
+				while(result.next()) {
+					// Bien qu'il n'y ait qu'un seul manager, faire result.first() pose problème.
+					// .next() va tout de même s'arrêter au bout du premier et unique manager rencontré pour cette catégorie.
+					instanceTrailRider.addPerson(managerDAO.find(result.getInt("IdManager")));
+				}
+				return instanceTrailRider;
 			}
-			
-			return instanceTR;
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return instanceTR;
+		return null;
 	}
 
 	@Override

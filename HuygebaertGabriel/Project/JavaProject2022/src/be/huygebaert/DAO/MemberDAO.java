@@ -65,7 +65,7 @@ public class MemberDAO extends DAO<Member>{
 	public List<Member> findAll() {
 		List <Member> allMembers = new ArrayList<Member>();
 		Member member;
-		
+		// TODO Leur(s) vélo(s) ? Véhicule ? Inscription? 
 		try {
 			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Member");
 			while(result.next()){
@@ -74,7 +74,12 @@ public class MemberDAO extends DAO<Member>{
 				member.setBalance(result.getDouble("Balance"));
 				member.setId(result.getInt("IdMember"));
 				// Compléter avec les catégories
-				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM cat_memb where IdMember =  " + result.getInt("IdMember"));
+				ResultSet result2 = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery(
+						"SELECT * FROM Member INNER JOIN Cat_Memb "
+						+ "ON Member.IdMember = Cat_Memb.IdMember "
+						+ "INNER JOIN Calendar "
+						+ "ON Calendar.IdCalendar = Cat_Memb.IdCalendar "
+						+ "WHERE IdMember =" + result.getInt("IdMember"));
 
 				while(result2.next()) {
 					CycloDAO cycloDAO = new CycloDAO(this.connect);
@@ -97,9 +102,10 @@ public class MemberDAO extends DAO<Member>{
 				}
 				allMembers.add(member);
 			}
+			return allMembers;
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return allMembers;
+		return null;
 	}
 }

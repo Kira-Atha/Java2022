@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -30,9 +31,7 @@ public class SignUp {
 	private JButton btn_Send, btn_Back;
 	private ButtonGroup typeAccountGroup, typeCategoryGroup;
 	private JRadioButton rbtn_Manager, rbtn_Member, rbtn_Treasurer, rbtn_Trialist, rbtn_TrailRider, rbtn_Cyclo,rbtn_Descender;
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -46,16 +45,10 @@ public class SignUp {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public SignUp() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		signUp = new JFrame("SignUp");
 		signUp.setBounds(0, 0, 800, 600);
@@ -176,7 +169,7 @@ public class SignUp {
 			String account = checkedAccount? typeAccountGroup.getSelection().getActionCommand():"";
 			boolean checkedCategory = typeCategoryGroup.getSelection() !=null;
 			String category = checkedCategory? typeCategoryGroup.getSelection().getActionCommand():"";
-			String result = formValidation(firstname,lastname,tel,pseudo,password,account,category);
+			String result = formValidation(firstname,lastname,password,pseudo,tel,account,category);
 			
 			lb_Error = new JLabel();
 			lb_Error.setBounds(300,250, 400, 300);
@@ -189,6 +182,8 @@ public class SignUp {
 				lb_Error.setText(result);
 				lb_Error.show();
 			}else {
+			
+				//___
 				Category category_ = null;
 				lb_Error.setText("");
 				lb_Error.hide();
@@ -196,6 +191,7 @@ public class SignUp {
 				DAOFactory adf = new DAOFactory();
 				DAO<Person> personDAO = adf.getPersonDAO();
 				
+
 				if(category.equals("Trialist")){
 					category_ =  Trialist.getInstance();
 				}
@@ -222,20 +218,25 @@ public class SignUp {
 				}
 				if(account.equals("Member")) {
 					Member member = new Member(firstname,lastname,password,tel,pseudo,category_);
+					// Velo mis à null, il sera modifié à la page suivante
 						if(!member.equals(null)) {
 							personDAO.create(member);
-							ConsultCategories next = new ConsultCategories();
-							JFrame consultCategories = next.consultCategories;
-							changeFrame(consultCategories);
+							AddVelo next = new AddVelo();
+							JFrame addVelo = next.addVelo;
+							changeFrame(addVelo);
 						}else {
 							lb_Error.setText("This member already exist !");
 						}
 				}
 				if(account.equals("Manager")) {
 					Manager manager = new Manager(firstname,lastname,password,tel,pseudo,category_);
-//					System.out.println(category_);
-//					System.out.println(manager.getFirstname());
-//					System.out.println(manager.getPseudo());
+					
+					// TEST
+					System.out.println(category_);
+					System.out.println(manager.getFirstname());
+					System.out.println(manager.getPseudo());
+					
+					
 					if(!manager.equals(null)) {
 						personDAO.create(manager);
 						ConsultCalendar next = new ConsultCalendar(manager);
@@ -250,12 +251,57 @@ public class SignUp {
 			JFrame home = previous.init;
 			changeFrame(home);
 		});
+		
+		rbtn_Treasurer.addActionListener(e-> {
+			if(rbtn_Treasurer.isSelected()) {
+				rbtn_Cyclo.setVisible(false);
+				rbtn_Descender.setVisible(false);
+				rbtn_Trialist.setVisible(false);
+				rbtn_TrailRider.setVisible(false);
+			}else {
+				rbtn_Cyclo.setVisible(true);
+				rbtn_Descender.setVisible(true);
+				rbtn_Trialist.setVisible(true);
+				rbtn_TrailRider.setVisible(true);
+			}
+		});
+		
+		rbtn_Manager.addActionListener(e-> {
+			if(rbtn_Treasurer.isSelected()) {
+				rbtn_Cyclo.setVisible(false);
+				rbtn_Descender.setVisible(false);
+				rbtn_Trialist.setVisible(false);
+				rbtn_TrailRider.setVisible(false);
+			}else {
+				rbtn_Cyclo.setVisible(true);
+				rbtn_Descender.setVisible(true);
+				rbtn_Trialist.setVisible(true);
+				rbtn_TrailRider.setVisible(true);
+			}
+		});
+		
+		rbtn_Member.addActionListener(e-> {
+			if(rbtn_Treasurer.isSelected()) {
+				rbtn_Cyclo.setVisible(false);
+				rbtn_Descender.setVisible(false);
+				rbtn_Trialist.setVisible(false);
+				rbtn_TrailRider.setVisible(false);
+			}else {
+				rbtn_Cyclo.setVisible(true);
+				rbtn_Descender.setVisible(true);
+				rbtn_Trialist.setVisible(true);
+				rbtn_TrailRider.setVisible(true);
+			}
+		});
+		
 		signUp.setVisible(true);
 	}
 	public void changeFrame(JFrame window) {
 		window.setVisible(true);
 		signUp.dispose();
 	}
+	
+	
 	public String formValidation(String firstname, String lastname, String password, String pseudo, String tel, String typeAccount, String typeCategory) {
 		String result="";
 		

@@ -3,7 +3,7 @@ package be.huygebaert.POJO;
 import java.io.Serializable;
 
 abstract public class Person implements Serializable {
-	private static final long serialVersionUID = 0L;
+	private static final long serialVersionUID = 8586954274748508608L;
 	protected static int idCount = 0;
 	protected int id;
 	protected String firstname;
@@ -11,6 +11,8 @@ abstract public class Person implements Serializable {
 	protected String password;
 	protected String tel;
 	protected String pseudo;
+	
+	public Person() {}
 	
 	public int getId() {
 		return id;
@@ -53,11 +55,9 @@ abstract public class Person implements Serializable {
 		return false;
 	}
 	public boolean signUp(String firstname, String lastname, String pseudo) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	public boolean signUp(String firstname, String lastname, String pseudo, Category category) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

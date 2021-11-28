@@ -36,7 +36,10 @@ public class ManagerDAO extends DAO<Manager>{
 	public Manager find(int id) {
 		Manager manager;
 		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * FROM Manager WHERE IdManager = " +id);
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery(
+					"SELECT * FROM Manager INNER JOIN Calendar "
+					+ "ON Calendar.IdCalendar = Manager.IdCalendar "
+					+ " WHERE IdManager = " +id);
 			if(result.first()){
 				// Compléter avec info de base
 				manager = new Manager(result.getString("Firstname"),result.getString("Lastname"),result.getString("Password"),result.getString("Tel"),result.getString("Pseudo"));
@@ -102,9 +105,10 @@ public class ManagerDAO extends DAO<Manager>{
 				}
 				allManagers.add(manager);
 			}
+			return allManagers;
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return allManagers;
+		return null;
 	}
 }

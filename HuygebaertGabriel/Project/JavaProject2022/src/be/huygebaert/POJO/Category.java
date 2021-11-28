@@ -1,14 +1,20 @@
 package be.huygebaert.POJO;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-abstract public class Category {
-	// Num category = num calendar => more easier
+abstract public class Category implements Serializable, AutoCloseable {
+	private static final long serialVersionUID = -309839438964916689L;
+	// Num category = num calendar 
 	protected static int numCount = 0;
 	protected int num;
-	private Manager singleManager;
-	private List<Member> categoryMembers;
+	private Manager singleManager = null;
+	private List<Member> categoryMembers = new ArrayList<Member>();
 	protected Calendar singleCalendar;
+	
+	
+	public Category() {}
 	
 	public int getNum() {
 		return num;
@@ -61,5 +67,21 @@ abstract public class Category {
 			}
 		}
 		return false;
+	}
+	
+	
+	// Garbage collector passera 
+	public void deleteCategory() {
+		this.singleCalendar = null;
+	}
+	
+	private boolean closed;
+	
+	public boolean isClosed() {
+		return closed;
+	}
+	@Override
+	public void close() throws Exception{
+		closed = true;
 	}
 }

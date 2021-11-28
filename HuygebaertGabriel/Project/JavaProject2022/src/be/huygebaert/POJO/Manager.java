@@ -6,9 +6,8 @@ import be.huygebaert.DAO.DAO;
 import be.huygebaert.DAO.DAOFactory;
 
 public class Manager extends Person {
-	
-	private static final long serialVersionUID = 1L;
-	private Category category;
+	private static final long serialVersionUID = -1584705078113981090L;
+	private Category category = null;
 	
 	public Manager(String firstname, String lastname, String password, String tel, String pseudo, Category category) {
 		try {
@@ -21,8 +20,6 @@ public class Manager extends Person {
 				this.tel=tel;
 				this.pseudo=pseudo;
 				this.category = category;
-			}else {
-				// lancer exception
 			}
 		}catch(Exception e) {
 			System.out.println("Manager doesn't create");
@@ -58,30 +55,11 @@ public class Manager extends Person {
 						return true;
 					}
 				}
+			}else {
+				// Si la liste des membres est vide le manager ne peut pas exister en tant que membre
+				return true;
 			}
 		return false;
-		
-//		DAOFactory adf = new DAOFactory();
-//		DAO<Manager> managerDAO = adf.getManagerDAO();
-//		List<Manager> allManagers = managerDAO.findAll();
-//		
-//		for(Manager manager:allManagers) {
-//			if(manager.getCategory().getNum() != category.getNum()) {
-//				if(category.getSingleManager() == null) {
-//					// Le manager existe peut-être déjà en tant que membre ?
-//					List<Member> allMembers = Member.getAllMembers();
-//					if(!allMembers.isEmpty()) {
-//						for(Member memb:allMembers) {
-//							if(!memb.firstname.equals(this.firstname) && !memb.lastname.equals(this.lastname) && !memb.pseudo.equals(this.pseudo)) {
-//								return true;
-//							}
-//						}
-//					}else {
-//						return true;
-//					}
-//				}
-//			}
-			
 	}
 	public void manageCalendar() {
 		

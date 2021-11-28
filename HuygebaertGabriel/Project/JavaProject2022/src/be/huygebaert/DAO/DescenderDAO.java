@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import be.huygebaert.POJO.Cyclo;
 import be.huygebaert.POJO.Descender;
 import be.huygebaert.POJO.Manager;
 import be.huygebaert.POJO.TrailRider;
@@ -35,33 +36,41 @@ public class DescenderDAO extends DAO<Descender>{
 
 	@Override
 	public Descender find(int id) {
-		Descender instanceDesc = Descender.getInstance();
-		
 		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar =" +id);
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY).executeQuery("SELECT * from Calendar WHERE IdCalendar ="+id);
 			if(result.first()) {
-				instanceDesc.setNum(result.getInt("IdCalendar"));
-				
-				
-				result = this.connect.createStatement().executeQuery("SELECT * FROM cat_memb where IdCalendar = " + id);
-				PersonDAO personDAO = new PersonDAO(this.connect);
-				while(result.next()) {
-					instanceDesc.addPerson(personDAO.find(result.getInt("IdMember")));
-				}
-				result = this.connect.createStatement().executeQuery("SELECT * FROM Manager where IdCalendar ="+id );
-				if(result.first()) {
-					instanceDesc.setSingleManager((Manager)personDAO.find(result.getInt("IdManager")));
-				}
+				Descender instanceDesc = Descender.getInstance();
+				MemberDAO memberDAO = new MemberDAO(this.connect);
+				ManagerDAO managerDAO = new ManagerDAO(this.connect);
 				CalendarDAO calendarDAO = new CalendarDAO(this.connect);
-				// car id identique
-				instanceDesc.setSingleCalendar(calendarDAO.find(id));
+				
+				instanceDesc.setSingleCalendar(calendarDAO.find(instanceDesc.getNum()));
+				
+				result = this.connect.createStatement().executeQuery(
+						"SELECT * FROM Calendar INNER JOIN Cat_Memb "
+						+ "ON Calendar.IdCalendar = Cat_Memb.IdCalendar "
+						+ "INNER JOIN Member "
+						+ "ON Cat_Memb.IdMember = Member.IdMember "
+						+ "WHERE IdCalendar ="+instanceDesc.getNum());
+				while(result.next()) {
+					instanceDesc.addPerson(memberDAO.find(result.getInt("IdMember")));
+				}
+				result = this.connect.createStatement().executeQuery(
+						"SELECT * FROM Calendar INNER JOIN Manager "
+						+ "ON Calendar.IdCalendar = Manager.IdCalendar "
+						+ "WHERE IdCalendar ="+instanceDesc.getNum());
+				
+				while(result.next()) {
+					// Bien qu'il n'y ait qu'un seul manager, faire result.first() pose problème.
+					// .next() va tout de même s'arrêter au bout du premier et unique manager rencontré pour cette catégorie.
+					instanceDesc.addPerson(managerDAO.find(result.getInt("IdManager")));
+				}
+				return instanceDesc;
 			}
-			
-			return instanceDesc;
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
-		return instanceDesc;
+		return null;
 	}
 
 	@Override
